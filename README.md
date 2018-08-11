@@ -2,6 +2,7 @@
 Terminal basic pour application semi-graphic type 5250<br>
 Jean-Pierre Laroche<br>
 projet 2018-08-08  (C) 2018   Copyright 2018  <laroche.jeanpierre@gmail.com><br>
+http://www.ombrebleu.com/wxsrc/src/
 
 but : 	terminal rapide	/ flexible / respectant le code escape<br>
         fast / flexible terminal / respecting the escape code<br>
