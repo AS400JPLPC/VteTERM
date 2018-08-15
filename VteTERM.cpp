@@ -49,8 +49,8 @@
 /// ex: 
 ///------------------------------------------
 
-#define WORKLIB		"/home/soleil/ZTERM/"
-#define WORKPGM		"./term"
+#define WORKLIB		"/home/soleil/VTERM/pgm/"	// dir execution program
+#define WORKPGM		"./????"					// program
 
 /// security key as a parameter for the application
 #define KEYPGM 		"GEN001K"
@@ -150,7 +150,7 @@ gboolean key_press_ALTF4()
 										char* cmd = new char[100];
 										sprintf(cmd,"kill -9 %d ",child_pid); exec_prog(cmd);
 
-										sprintf(cmd,"kill -9 %d ",getpid() ); exec_prog(cmd);
+										gtk_main_quit ();
 										return EXIT_FAILURE ;
 										break;
 									}
@@ -193,8 +193,8 @@ void	init_Terminal()
 	char * font_terminal = new char[30] ;
 	/// font screen 17"<  or  17">								Font DejaVu Sans Mono -> xfce4-terminal
 	if ( s->width <= 1600 && s->height >=1024 ) sprintf(font_terminal,"%s %s" , VTEFONT,"13");
-	else if ( s->width >= 1920 && s->height >=1080 ) sprintf(font_terminal,"%s %s" ,VTEFONT,"16");
-
+	else if ( s->width <= 1920 && s->height >=1080 ) sprintf(font_terminal,"%s %s" ,VTEFONT,"15");
+	else if ( s->width >  1920 ) sprintf(font_terminal,"%s %s" ,VTEFONT,"16");
 
 	
 	// resize  title  font  

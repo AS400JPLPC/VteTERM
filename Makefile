@@ -2,8 +2,8 @@
 .PHONY: all mrprope build clean
 # désactivation des règles implicites
 .SUFFIXES:
-# nom de l'executable : 
-EXEC = VteTERM
+# nom de l'executable :
+EXEC = vterm
 
 
 # Adresse des sources, des objets et des includes :
