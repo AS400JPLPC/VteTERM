@@ -8,7 +8,8 @@ but : 	terminal rapide	/ flexible / respectant le code escape<br>
         fast / flexible terminal / respecting the escape code<br>
         console dédié uniquement a une application<br>
         console dedicated to an application only<br>
-        -no-pie EXÉCUTABLE<br>  
+        -no-pie EXÉCUTABLE<br>
+        contrôle ALT_F4 close urgence for DEBUG <br>
 
 outil pour développer une application de type 5250 / 3270 ou terminal semi-graphic<br>
 tool to develop a 5250/3270 or terminal semi-graphic application<br> 
