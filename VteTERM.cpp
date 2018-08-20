@@ -3,12 +3,21 @@
 /// projet 2018-08-08  (C) 2018   Copyright 2018  <laroche.jeanpierre@gmail.com>
 /// but : 	terminal rapide	/ flexible / respectant le code escape
 ///			fast / flexible terminal / respecting the escape code
-/// 		console dédié uniquement a une application
-///			console dedicated to an application only
-///			-no-pie EXÉCUTABLE  
+/// 		console dédié uniquement à une application multi-process 
+///			console dedicated to an application only multi-process
+///			-no-pie EXÉCUTABLE  programme maitre mini server terminal
+///			+ souple que XTERM et + sécuritaire que les terminal public  pour des applicatifs 
+
+
 
 ///			outil pour développer une application de type 5250 / 3270 ou terminal semi-graphic
-///			tool to develop a 5250/3270 or terminal semi-graphic application 
+///			tool to develop a 5250/3270 or terminal semi-graphic application
+
+
+
+
+
+
 
 /// THANK YOU   MERCI BEAUCOUP
 /// thanks Mr. CHRISTOPHE BLAESS for the book development system LINUX 1..4 edition en Français " ouf ;) "
@@ -40,33 +49,35 @@
 
 /// à été compiler avec  C++17
 
-/// -----------------------------------------------------------------
-
-
-
 ///------------------------------------------
 /// paramétrage spécifique
 /// ex: 
 ///------------------------------------------
 
-#define WORKLIB		"/home/soleil/VTERM/pgm/"	// dir execution program
-#define WORKPGM		"./????"					// program
+#define WORKLIB		"/home/soleil/VTERM/pgm/"
+#define WORKPGM		"./term"
 
 /// security key as a parameter for the application
-#define KEYPGM 		"GEN001K"
+#define KEYPGM 		"GEN001K"	/// example 
 
-#define VTEFONT	"DejaVu Sans Mono"
-#define ROW		42
+bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true
+#define MESSAGE_ALT_F4 "vous devez activer uniquement \n en développemnt  \n Confirm destroy Application --> DEBUG"
+
+
+
+
+
+/// ----------------------------------------
+/// par default
+///-----------------------------------------
+#define VTENAME "VTE-TERM3270"
+
 #define COL		132
-#define TITLE	"Vte-TERM5250"
+#define ROW		43  ///including a line for the system
 
-bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true 
-#define MESSAGE_ALT_F4 "vous devez activer uniquement \n en développemnt \n Confirm destroy Application --> DEBUG"
-
-
-
-
-
+/// defined not optional
+#define VTEFONT	"DejaVu Sans Mono"
+ 
 //*******************************************************
 // PROGRAME 
 //*******************************************************
@@ -88,12 +99,12 @@ bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true
 
 
 
-GtkWidget *window, *terminal;
+GtkWidget	*window, *terminal;
 
 GPid child_pid = 0;
 
 ///--------------------------------------------
-/// traitement for Kill nto excute system(...)
+/// traitement for Kill not excute system(...)
 ///--------------------------------------------
 int exec_prog(const char* commande)
 {
@@ -149,7 +160,6 @@ gboolean key_press_ALTF4()
 									{
 										char* cmd = new char[100];
 										sprintf(cmd,"kill -9 %d ",child_pid); exec_prog(cmd);
-
 										gtk_main_quit ();
 										return EXIT_FAILURE ;
 										break;
@@ -192,25 +202,51 @@ void	init_Terminal()
 	Screen*  s = DefaultScreenOfDisplay(d);
 	char * font_terminal = new char[30] ;
 	/// font screen 17"<  or  17">								Font DejaVu Sans Mono -> xfce4-terminal
-	if ( s->width <= 1600 && s->height >=1024 ) sprintf(font_terminal,"%s %s" , VTEFONT,"13");
-	else if ( s->width <= 1920 && s->height >=1080 ) sprintf(font_terminal,"%s %s" ,VTEFONT,"15");
-	else if ( s->width >  1920 ) sprintf(font_terminal,"%s %s" ,VTEFONT,"16");
+	if ( s->width <= 1600 && s->height >=1024 ) sprintf(font_terminal,"%s %s" , VTEFONT,"13");			/// correct for 24/80 possible extend 15"
+	else if ( s->width <= 1920 && s->height >=1080 ) sprintf(font_terminal,"%s %s" ,VTEFONT,"15"); 		/// correct
+	else if ( s->width > 1920  ) sprintf(font_terminal,"%s %s" ,VTEFONT,"16");							/// confortable and extend numbers columns and rows
 
 	
 	// resize  title  font  
     VTE = VTE_TERMINAL (terminal);
      
-	vte_terminal_set_size (VTE, COL, ROW);
+	vte_terminal_set_size (VTE, COL, ROW);													/// size du terminal
   
-	gtk_window_set_title(GTK_WINDOW(window), TITLE);
+	gtk_window_set_title(GTK_WINDOW(window), VTENAME);										/// titre du terminal de base
 
-	vte_terminal_set_font (VTE,pango_font_description_from_string(font_terminal));
+	vte_terminal_set_font (VTE,pango_font_description_from_string(font_terminal));			/// font utilisé
+
+	vte_terminal_set_scrollback_lines (VTE,0);		 										///	désactiver le défilement arrière.
+
+    vte_terminal_set_encoding(VTE,NULL,NULL);												/// UTF8                           
+}
+
+
+/// -----------------------------------------------------------------------------
+/// possibility to change the name of the terminal
+/// -----------------------------------------------------------------------------
+
+
+void on_title_changed(GtkWidget *terminal)
+{
+    gtk_window_set_title(GTK_WINDOW(window), vte_terminal_get_window_title(VTE_TERMINAL(terminal)));
+}
+
+
+/// -----------------------------------------------------------------------------
+/// possibility to change the number of columns and rows
+/// -----------------------------------------------------------------------------
+
+void on_resize_window(GtkWidget *terminal, guint  _col, guint _row)
+{
+	  vte_terminal_set_size (VTE_TERMINAL(terminal),_col,_row);
 }
 
 
 
-
-
+/// -----------------------------------------------------------------------------
+/// possibility to change the number of columns and rows
+/// -----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
 {
@@ -227,7 +263,7 @@ int main(int argc, char *argv[])
 
 	
 	
-	// Initialise GTK, the window
+	// Initialise GTK, the window traditional work
     gtk_init(&argc, &argv);
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "VteTerm");
@@ -261,7 +297,10 @@ int main(int argc, char *argv[])
     // Connect some signals
 	g_signal_connect(GTK_WINDOW(window),"delete_event", G_CALLBACK (key_press_ALTF4), NULL);
 	g_signal_connect(terminal, "child-exited", gtk_main_quit, NULL);
+	g_signal_connect(terminal, "window-title-changed", G_CALLBACK(on_title_changed), NULL);
+	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
 
+	
 
     // specific initialization of the terminal
 	init_Terminal();
@@ -275,5 +314,3 @@ int main(int argc, char *argv[])
     
     return EXIT_SUCCESS;
 }
-
-

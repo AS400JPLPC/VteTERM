@@ -26,7 +26,7 @@ EXECUTABLE = $(BINDIR)$(EXEC)
 # choix du compilateur :
 CXX = g++
 
-# options compilations : voir vte-dev  -Wextra -Wno-unused-parameter   use juste for debug only for you 
+# options compilations : voir vte-dev ---->  -Wextra               -Wno-unused-parameter   use juste for debug only for you 
 
 CPPFLAGS=    -std=c++17 -Wall  -fexceptions -pedantic-errors  -Wno-parentheses -Waddress -Wsign-compare -fpermissive  \
 			`pkg-config --cflags gtk+-3.0`  `pkg-config --cflags vte-2.91` -fexpensive-optimizations -O3 -Os 
