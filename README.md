@@ -24,3 +24,10 @@ https://github.com/SgtWiggles/ume   thank you that inspired me to set up a dedic
 https://vincent.bernat.im/fr/blog/2017-ecrire-emulateur-terminal<br>
 <br>
 tank you github for exemple open-source for etude<br>
+
+
+-------------------------------------------------------
+possibility of parameter change by the child process<br>
+
+possibility to change the number of columns and rows<br>
+possibility to change the name of the terminal<br>
