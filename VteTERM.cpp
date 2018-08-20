@@ -16,6 +16,9 @@
 
 
 
+
+
+
 /// THANK YOU   MERCI BEAUCOUP
 /// thanks Mr. CHRISTOPHE BLAESS for the book development system LINUX 1..4 edition en Français " ouf ;) "
 
@@ -242,7 +245,7 @@ void on_resize_window(GtkWidget *terminal, guint  _col, guint _row)
 
 
 /// -----------------------------------------------------------------------------
-/// possibility to change the number of columns and rows
+///  libvte function putting the terminal function active
 /// -----------------------------------------------------------------------------
 
 int main(int argc, char *argv[])
