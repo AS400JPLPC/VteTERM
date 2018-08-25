@@ -31,3 +31,11 @@ possibility of parameter change by the child process<br>
 
 possibility to change the number of columns and rows<br>
 possibility to change the name of the terminal<br>
+<br>
+set_screen(43,132,"VTE-5250",F_WHITE,B_BLUE);<br>
+
+exemple:<br>
+	home/soleil/VTETERM/bin/vteterm <br>
+        { programme ......<br>
+        execv_VTETERM("/home/soleil/VTETERM/bin/","vteterm" ,"term2");<br>
+        } deuxiemme niveau etc.... <br>
