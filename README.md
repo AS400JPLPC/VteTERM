@@ -6,10 +6,9 @@ http://www.ombrebleu.com/wxsrc/src/
 
 but : 	terminal rapide	/ flexible / respectant le code escape<br>
         fast / flexible terminal / respecting the escape code<br>
-        console dédié uniquement a une application<br>
-        console dedicated to an application only<br>
         -no-pie EXÉCUTABLE<br>
         contrôle ALT_F4 close urgence for DEBUG <br>
+	management keyboard fontion type F1....KPENTER...ESC CRTL... etc 
 
 outil pour développer une application de type 5250 / 3270 ou terminal semi-graphic<br>
 tool to develop a 5250/3270 or terminal semi-graphic application<br> 
@@ -31,6 +30,7 @@ possibility of parameter change by the child process<br>
 
 possibility to change the number of columns and rows<br>
 possibility to change the name of the terminal<br>
+possibility key_press<br>
 <br>
 set_screen(43,132,"VTE-5250",F_WHITE,B_BLUE);<br>
 
