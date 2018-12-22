@@ -57,15 +57,10 @@
 #define WORKLIB		"/home/soleil/VTETERM/pgm/"
 #define WORKPGM		"./jplecr"
 
-/// security key as a parameter for the application
-//#define KEYPGM 		"GEN001K"	/// example
 
 bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true
 
 #define MESSAGE_ALT_F4 "vous devez activer uniquement \n en développemnt  \n Confirm destroy Application --> DEBUG"
-
-
-
 
 
 /// ----------------------------------------
@@ -73,9 +68,9 @@ bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true
 ///-----------------------------------------
 #define VTENAME "VTE-TERM3270"
 
-#define COL		132
+#define COL		132	/// max 132
 
-#define ROW		43  ///including a line for the system
+#define ROW		42	/// max 43 including a line for the system
 
 /// defined not optional
 #define VTEFONT	"DejaVu Sans Mono"
@@ -186,12 +181,13 @@ int exec_prog(const char* commande)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void key_press_cb(GtkWidget *widget, GdkEventKey *event)
+void key_press(GtkWidget *widget, GdkEventKey *event)
 {
 	*key__num =0;
  
     const guint modifiers = event->state & gtk_accelerator_get_default_mod_mask();
     const guint keyval = event->keyval;
+ 
     if (modifiers == GDK_CONTROL_MASK)
     {
         switch (keyval)
@@ -551,6 +547,7 @@ void	init_Terminal()
 	
     vte_terminal_set_encoding(VTE,NULL,NULL);												/// UTF8
 
+
 }
 
 
@@ -578,6 +575,7 @@ void on_title_changed(GtkWidget *terminal)
 void on_resize_window(GtkWidget *terminal, guint  _col, guint _row)
 {
 	  vte_terminal_set_size (VTE_TERMINAL(terminal),_col,_row);
+	  gtk_widget_show_all(window);
 }
 
 /// -----------------------------------------------------------------------------
@@ -615,6 +613,8 @@ int main(int argc, char *argv[])
 	gtk_window_set_resizable (GTK_WINDOW(window),false);
 	gtk_window_set_deletable (GTK_WINDOW(window),false);
 
+
+
     /* Initialise the terminal */
     terminal = vte_terminal_new();
 
@@ -628,7 +628,7 @@ int main(int argc, char *argv[])
         NULL,			// GSpawnChildSetupFunc child_setup,
         NULL,			// gpointer child_setup_data,
         NULL,			// GDestroyNotify child_setup_data_destroy,
-        -1,				//  int timeout
+        -1,				// int timeout
         NULL,			// GCancellable *cancellable,
 
         &term_spawn_callback,
@@ -638,13 +638,15 @@ int main(int argc, char *argv[])
 
 
     // Connect some signals
-	g_signal_connect(GTK_WINDOW(window),"delete_event", G_CALLBACK (key_press_ALTF4), NULL);
+	g_signal_connect(GTK_WINDOW(window),"delete_event", G_CALLBACK(key_press_ALTF4), NULL);
+	g_signal_connect(GTK_WINDOW(window),"key-press-event", G_CALLBACK(key_press), NULL);
+	
 	g_signal_connect(terminal, "child-exited",  G_CALLBACK (gtk_main_quit), NULL);
 	g_signal_connect(terminal, "destroy",  G_CALLBACK (gtk_main_quit), NULL);
 	g_signal_connect(terminal, "window-title-changed", G_CALLBACK(on_title_changed), NULL);
 	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
+	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
 
-	g_signal_connect(GTK_WINDOW(window), "key-press-event", G_CALLBACK(key_press_cb), NULL);
 
 	
     // specific initialization of the terminal
@@ -654,7 +656,7 @@ int main(int argc, char *argv[])
     /* Put widgets together and run the main loop */
     gtk_container_add(GTK_CONTAINER(window), terminal);
 
-    gtk_widget_show_all(window);
+    gtk_widget_hide(window);// hide flash 
 
     gtk_main();
 	terminal_close();
