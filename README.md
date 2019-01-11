@@ -28,12 +28,16 @@ tank you github for exemple open-source for etude<br>
 -------------------------------------------------------
 possibility of parameter change by the child process<br>
 
-possibility to change the number of columns and rows<br>
+possibility resize columns and rows<br>
 possibility to change the name of the terminal<br>
-possibility key_press<br>
+procédure de gestion de message SHM<br>
+<br>
 <br>
 set_screen(43,132,"VTE-5250",F_WHITE,B_BLUE);<br>
-
+<br>
+function mouse scroll   GDK_SCROLL_UP->GDK_KEY_Up <br>
+function keyboard 	F1 ...F24... Enter KP_enter etc....<br>
+<br>
 exemple:<br>
 	home/soleil/VTETERM/bin/vteterm <br>
         { programme ......<br>

@@ -171,12 +171,25 @@ int exec_prog(const char* commande)
 
 	return EXIT_SUCCESS;
 }
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-///		function keyboard only key type F1 etc.... touche de fontion Enter KP_enter etc.... 
+///		function mouse scroll   GDK_SCROLL_UP->GDK_KEY_Up 					GDK_SCROLL_DOWN->GDK_KEY_Down
+///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void mouse_scroll(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
+{
+	*key__num =0;
+	if (event->direction == GDK_SCROLL_UP )		*key__num = 213;;
+	if (event->direction == GDK_SCROLL_DOWN )	*key__num = 214;;
+
+	gtk_widget_activate (terminal);
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+///		function keyboard only key type F1 etc....  Enter KP_enter etc.... 
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -646,13 +659,14 @@ int main(int argc, char *argv[])
 	g_signal_connect(GTK_WINDOW(window),"delete_event", G_CALLBACK(key_press_ALTF4), NULL);
 
 	gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
- 	g_signal_connect(G_OBJECT(window),"key-press-event", G_CALLBACK(key_press),terminal);
-
+	g_signal_connect(G_OBJECT(window),"key-press-event", G_CALLBACK(key_press),terminal);
+	
+	gtk_widget_add_events(window, GDK_SCROLL_MASK);
+	g_signal_connect(G_OBJECT(window),"scroll-event",G_CALLBACK (mouse_scroll),terminal); 
 	
 	g_signal_connect(terminal, "child-exited",  G_CALLBACK (close_window), NULL);
 	g_signal_connect(terminal, "destroy",  G_CALLBACK (close_window), NULL);
 	g_signal_connect(terminal, "window-title-changed", G_CALLBACK(on_title_changed), NULL);
-	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
 	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
 
 
