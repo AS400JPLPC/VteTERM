@@ -99,6 +99,7 @@ bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true
 #include <gdk/gdkx.h>
 
 
+
 GtkWidget	*window, *terminal;
 
 GPid child_pid = 0;
@@ -113,19 +114,19 @@ GPid child_pid = 0;
 int *key__num ;
 int shmid;
  
-void terminal_start(void)							// init smh GDK keyboard communication server vteterm 
+void init_Keyboard(void)							// init smh GDK keyboard communication server vteterm 
 {
-	char *t_key = new char[30] ;
-	sprintf(t_key, "SMEG%d",getpid());
+	char *t_key =  new char[30];
+	sprintf(t_key, "SHMGDK%d",getpid());
 	key_t vtekey= *t_key;
 	shmid = shmget(vtekey, sizeof(int), 0666 | IPC_CREAT |SHM_RND);
 	key__num = ( int *) shmat(shmid, NULL, 0);
 
-	shmctl(shmid,SHM_LOCK,0);	
-	delete t_key;
+	shmctl(shmid,SHM_LOCK,0);
+	delete [] t_key;
 }
 
-void terminal_close(void)							// init smh GDK keyboard communication server vteterm 
+void close_Keyboard(void)							// init smh GDK keyboard communication server vteterm 
 {
 
 	shmctl(shmid,IPC_RMID,0);
@@ -148,10 +149,10 @@ int exec_prog(const char* commande)
 {
 	int retour;
 	pid_t pid;
-	char * P_cmd = (char*) malloc(1024);
+	char * P_cmd = new char[strlen(commande)+1];
 	sprintf(P_cmd,"%s",commande);
 	char *argx[] = {(char*)"sh",(char*)"-c",P_cmd,NULL};
-
+	free(P_cmd);
 
 
 	if((pid = fork()) <0)
@@ -161,7 +162,7 @@ int exec_prog(const char* commande)
 	{
 		execv("/bin/sh",argx);
 	}
-	delete P_cmd;
+
 	delete argx[3];delete argx[2];delete argx[1];delete argx[0];
 	
 	while ( waitpid(pid, &retour,0) <0)
@@ -175,19 +176,18 @@ int exec_prog(const char* commande)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
-///		function keyboard only key type F1 etc.... 
+///		function keyboard only key type F1 etc.... touche de fontion Enter KP_enter etc.... 
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-void key_press(GtkWidget *widget, GdkEventKey *event)
+void key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 {
 	*key__num =0;
  
     const guint modifiers = event->state & gtk_accelerator_get_default_mod_mask();
     const guint keyval = event->keyval;
- 
+
     if (modifiers == GDK_CONTROL_MASK)
     {
         switch (keyval)
@@ -452,7 +452,7 @@ void key_press(GtkWidget *widget, GdkEventKey *event)
 				*key__num =0; break;
         }
 	}
-
+gtk_widget_activate (terminal);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -462,6 +462,12 @@ void key_press(GtkWidget *widget, GdkEventKey *event)
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void close_window()
+{
+	close_Keyboard();
+	gtk_main_quit ();
+}
+
 
 ///-------------------------------------
 /// traitement ALT+F4
@@ -490,24 +496,23 @@ gboolean key_press_ALTF4()
 		{
 			case  GTK_RESPONSE_YES:
 									{
-										char* cmd = new char[100];
+										char* cmd = (char *)malloc(sizeof(char) * 100);
 										sprintf(cmd,"kill -9 %d ",child_pid); exec_prog(cmd);
-										terminal_close();
-										gtk_main_quit ();
+										free(cmd);
+										close_window();
 										return EXIT_FAILURE ;
-										break;
+										//break;
 									}
 			case GTK_RESPONSE_NO:
 									// not active ALT_F4
 									return GDK_EVENT_STOP;
-									break;
+									//break;
 		}
 
 	}
 	// not active ALT_F4
 	return GDK_EVENT_STOP;
 }
-
 
 
 
@@ -605,10 +610,10 @@ int main(int argc, char *argv[])
 	
 	// Initialise GTK, the window traditional work
 	 
-    gtk_init(&argc,&argv);
+   gtk_init(&argc,&argv);
  
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "VTERM0");
+  //  gtk_window_set_title(GTK_WINDOW(window), "VTERM0");
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER_ALWAYS);
 	gtk_window_set_resizable (GTK_WINDOW(window),false);
 	gtk_window_set_deletable (GTK_WINDOW(window),false);
@@ -639,10 +644,13 @@ int main(int argc, char *argv[])
 
     // Connect some signals
 	g_signal_connect(GTK_WINDOW(window),"delete_event", G_CALLBACK(key_press_ALTF4), NULL);
-	g_signal_connect(GTK_WINDOW(window),"key-press-event", G_CALLBACK(key_press), NULL);
+
+	gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
+ 	g_signal_connect(G_OBJECT(window),"key-press-event", G_CALLBACK(key_press),terminal);
+
 	
-	g_signal_connect(terminal, "child-exited",  G_CALLBACK (gtk_main_quit), NULL);
-	g_signal_connect(terminal, "destroy",  G_CALLBACK (gtk_main_quit), NULL);
+	g_signal_connect(terminal, "child-exited",  G_CALLBACK (close_window), NULL);
+	g_signal_connect(terminal, "destroy",  G_CALLBACK (close_window), NULL);
 	g_signal_connect(terminal, "window-title-changed", G_CALLBACK(on_title_changed), NULL);
 	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
 	g_signal_connect(terminal, "resize-window", G_CALLBACK(on_resize_window),NULL);
@@ -651,14 +659,17 @@ int main(int argc, char *argv[])
 	
     // specific initialization of the terminal
 	init_Terminal();
-	// INIT transmit code keyboard 
-	terminal_start();
+	// INIT transmit code keyboard to terminal
+	init_Keyboard();
+
+
     /* Put widgets together and run the main loop */
     gtk_container_add(GTK_CONTAINER(window), terminal);
 
-    gtk_widget_hide(window);// hide flash 
-
+    gtk_widget_hide(window);			// hide = ignore flash 
+	gtk_widget_activate (terminal);		// force activate terminal
+	
     gtk_main();
-	terminal_close();
+	
     return EXIT_SUCCESS;
 }
