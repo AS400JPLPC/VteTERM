@@ -54,7 +54,7 @@
 /// ex:
 ///------------------------------------------
 
-#define WORKLIB		"/home/soleil/VTETERM/pgm/"
+#define WORKLIB		"/home/soleil/VTETERM/bin/"
 #define WORKPGM		"./jplecr"
 
 
@@ -97,7 +97,6 @@ bool _DEBUG_  = true; /// ALT_F4 ATVIVE  _DEBUG_ = true
 
 
 #include <gdk/gdkx.h>
-
 
 
 GtkWidget	*window, *terminal;
@@ -183,9 +182,13 @@ void mouse_scroll(GtkWidget *widget, GdkEventScroll *event, gpointer user_data)
 	*key__num =0;
 	if (event->direction == GDK_SCROLL_UP )		*key__num = 213;;
 	if (event->direction == GDK_SCROLL_DOWN )	*key__num = 214;;
-
+	sleep(0.8);	// ralentir nous ne sommes pas graphic ;)
 	gtk_widget_activate (terminal);
+
+
 }
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -565,7 +568,7 @@ void	init_Terminal()
 	
     vte_terminal_set_encoding(VTE,NULL,NULL);												/// UTF8
 
-
+	vte_terminal_set_mouse_autohide(VTE, TRUE);												/// cacher le curseur de la souris quand le clavier est utilisé.
 }
 
 
@@ -663,7 +666,8 @@ int main(int argc, char *argv[])
 	
 	gtk_widget_add_events(window, GDK_SCROLL_MASK);
 	g_signal_connect(G_OBJECT(window),"scroll-event",G_CALLBACK (mouse_scroll),terminal); 
-	
+
+
 	g_signal_connect(terminal, "child-exited",  G_CALLBACK (close_window), NULL);
 	g_signal_connect(terminal, "destroy",  G_CALLBACK (close_window), NULL);
 	g_signal_connect(terminal, "window-title-changed", G_CALLBACK(on_title_changed), NULL);
