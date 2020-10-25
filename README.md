@@ -24,6 +24,8 @@ https://vincent.bernat.im/fr/blog/2017-ecrire-emulateur-terminal<br>
 tank you github for exemple open-source for etude<br>
 
 
+**un terminal fait pour les appliquations dans un terminal/console  
+
 <br>
 contrôle :  is programme (.trm) , is directorie , is exsite  <br>
 
