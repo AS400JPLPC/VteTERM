@@ -310,7 +310,8 @@ inline bool extention_File(const std::string& name) {
 		return true; 
 }
 
-inline bool dir_File(const std::string& strdir) {
+inline bool isDir_File(const std::string& name) {
+		std::string strdir = std::filesystem::path(name.c_str()).parent_path();
 		if (strdir.empty() ) return false; 
 		return true; 
 }
@@ -339,9 +340,9 @@ int main(int argc, char *argv[])
 		command = arg_1;
 	}
 	if (argc == 2 )  { 
-		if ( false == extention_File((char*)argv[1]) ) return EXIT_FAILURE; // contrôle extention
-		if ( false == dir_File(std::filesystem::path((const char*)(char*)argv[1]).parent_path()) ) return EXIT_FAILURE; // contrôle directorie
-		if ( false == exists_File((char*)argv[1]) ) return EXIT_FAILURE;	// contrôle si programme
+		if ( false == extention_File((char*)argv[1]) )	return EXIT_FAILURE;	// contrôle extention
+		if ( false == isDir_File((char*)argv[1]) ) 		return EXIT_FAILURE; 	// contrôle is directorie
+		if ( false == exists_File((char*)argv[1]) )		return EXIT_FAILURE;	// contrôle si programme
 		dir = std::filesystem::path((const char*)(char*)argv[1]).parent_path().c_str();
 		command = arg_2;
 	}

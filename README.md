@@ -12,7 +12,7 @@ but : 	terminal rapide	/ flexible / respectant le code escape<br>
 outil pour développer une application de type 5250 / 3270 ou terminal semi-graphic<br>
 tool to develop a 5250/3270 or terminal semi-graphic application<br> 
 <br>
-THANK YOU   MERCI BEAUCOUP<br>
+THANK YOU   MERCI<br>
 thanks Mr. CHRISTOPHE BLAESS for the book development system LINUX 1..4 edition en Français " ;) " <br>
 <br>
 GTK platform and GNOME for VTE-TERMINAL<br>
@@ -24,11 +24,16 @@ https://vincent.bernat.im/fr/blog/2017-ecrire-emulateur-terminal<br>
 tank you github for exemple open-source for etude<br>
 
 
--------------------------------------------------------
-possibility of parameter change by the child process<br>
+<br>
+contrôle :  is programme (.trm) , is directorie , is exsite  <br>
+
+lib : libvte3 GTK3 <br>
+-------------------------------------------------------<br>
+<br>
 
 possibility resize columns and rows<br>
 possibility to change the name of the terminal<br>
+possibility to contrôle ALT_F4<br>
 
 call programme type xterm 
 <br>
@@ -38,5 +43,5 @@ call programme type xterm
 exemple:<br>
 	home/soleil/VTETERM/bin/vteTerm <br>
 OR<br>
-    home/soleil/VTETERM/bin/vteTerm  ./test.trm<br>
+    home/soleil/VTETERM/bin/vteTerm  ./test.trm -->(use nim)<br>
 
