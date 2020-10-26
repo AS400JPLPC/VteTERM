@@ -27,7 +27,7 @@ tank you github for exemple open-source for etude<br>
 **un terminal fait pour les appliquations dans un terminal/console**  
 
 <br>
-contrôle :  is programme (.trm) , is directorie , is exsite  <br>
+contrôle :  is programme  , is directorie , is exsite  possible extend ex: contrôle autorisation voir stat Linux<br>
 
 lib : libvte3 GTK3 <br>
 -------------------------------------------------------<br>
@@ -45,5 +45,5 @@ call programme type xterm
 exemple:<br>
 	home/soleil/VTETERM/bin/vteTerm <br>
 OR<br>
-    home/soleil/VTETERM/bin/vteTerm  ./test.trm -->(use nim)<br>
+    home/soleil/VTETERM/bin/vteTerm  ./test-->(use nim)<br>
 

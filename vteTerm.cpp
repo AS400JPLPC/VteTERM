@@ -303,10 +303,10 @@ inline bool exists_File (const std::string& name) {
 }
 
 
-// programme linux pas d'extention windows ".exe"  specifique terminal ".trm"
+// programme linux pas d'extention windows ".exe"
 inline bool extention_File(const std::string& name) {
 		std::filesystem::path filePath = name.c_str();
-		if (filePath.extension()!= ".trm") return false;
+		if (filePath.extension()!= "") return false;
 		return true; 
 }
 
